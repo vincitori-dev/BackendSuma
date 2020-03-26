@@ -12,8 +12,8 @@ use app\modules\v1\models\SignupForm;
 class UserController extends Controller
 {
     /**
-     * Renders the index view for the module
-     * @return string
+     * Funcion que permite logearse en la aplicacion
+     * @return string devuelve un token de acceso
      */
     public function actionLogin()
     {

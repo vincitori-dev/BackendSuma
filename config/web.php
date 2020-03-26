@@ -57,7 +57,7 @@ $config = [
             'rules' => [
                 ['class' => 'yii\rest\UrlRule',
                 'pluralize' => false,
-                'controller' => ['v1/cuenta']],
+                'controller' => ['v1/cuenta','v1/movimiento']],
             ],
         ],
         

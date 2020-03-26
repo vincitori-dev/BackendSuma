@@ -6,6 +6,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\behaviors\BlameableBehavior;
 use yii\db\Expression;
+use app\models\User;
 
 /**
  * This is the model class for table "cuenta".
@@ -45,7 +46,28 @@ class Cuenta extends \yii\db\ActiveRecord
             [['name'], 'string', 'max' => 40],
         ];
     }
-
+    /**
+     * Funcion que determina que campos se van a devolver
+     * Comentar aquellos campos que no se quieran mostrar
+     * @return [type] [description]
+     */
+    public function fields()
+    {
+        //Poner en el array los campos que se quieran mostrar
+        return [
+            'id',
+            'name',
+            'distribution',
+            'amount',
+            'color',
+            'icon',
+            'created_at',
+            'updated_at',
+            //'propietarios',
+            //'distribution_N',
+            'XXXXX',
+        ];
+    }
     /**
      * {@inheritdoc}
      */
@@ -70,5 +92,49 @@ class Cuenta extends \yii\db\ActiveRecord
     public static function find()
     {
         return new CuentaQuery(get_called_class());
+    }
+    /**
+     * Funcion auxiliar para obtener los propietarios de la cuenta
+     * dado que es una relacion n:m es necesario relacionarse con la tabla
+     * auxiliar 'usuarioCuenta' para conectar 'user' y 'cuenta'
+     * @return mixed
+     */
+    public function getUsuarioCuenta()
+    {
+        return $this->hasMany(UsuarioCuenta::className(), ['idCuenta' => 'id']);
+    }
+    /**
+     * Funcion que devuelve los 'user' propietarios de la cuenta
+     * $cuenta->getPropietarios() devuelve una instancia ActiveQuery
+     * @return $cuenta->propietarios devuelve una array de 'user' objetos
+     */
+    public function getPropietarios()
+    {
+        return $this->hasMany(User::className(), ['id' => 'idUsuario'])
+                    ->via('usuarioCuenta');
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getPropietariosDistribution()
+    {
+        return $this->hasMany(UsuarioCuenta::className(), ['idCuenta' => 'id'])->with('propietario');
+    }
+    /**
+     * @return mixed
+     */
+    public function getXXXXX()
+    {
+        $lista     = $this->propietariosDistribution;
+        $resultado = [];
+        foreach ($lista as $pd) {
+            $resultado[] = [
+                'username'         => $pd->propietario->username,
+                //'email'        => $pd->propietario->email,
+                'distribution' => $pd->distribution,
+            ];
+        }
+        return $resultado;
     }
 }

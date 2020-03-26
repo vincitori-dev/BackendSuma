@@ -1,17 +1,17 @@
 <?php
 
 namespace app\modules\v1\controllers;
-use app\modules\v1\resources\CuentaResource;
+use app\modules\v1\resources\MovimientoResource;
 use yii\rest\ActiveController;
 use yii\filters\auth\HttpBearerAuth;
 use yii\filters\auth\CompositeAuth;
 
-class CuentaController extends ActiveController
+class MovimientoController extends ActiveController
 {
     /**
      * @var mixed
      */
-    public $modelClass = CuentaResource::class;
+    public $modelClass = MovimientoResource::class;
 
     /**
      * @return mixed
@@ -32,7 +32,6 @@ class CuentaController extends ActiveController
         ];
         return $behaviors;
     }
-
     public function actions()
     {
         $actions = parent::actions();
@@ -41,9 +40,10 @@ class CuentaController extends ActiveController
         $actions['index']['prepareDataProvider'] = function($action) 
         {
             return new \yii\data\ActiveDataProvider([
-               'query' => CuentaResource::find()->joinWith('propietarios')->where(['idUsuario'=>\Yii::$app->user->id]),
+               'query' => MovimientoResource::find()->where(['idUsuario' => \Yii::$app->user->id]),
             ]);
         };
         return $actions;
     }
+
 }
