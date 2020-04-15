@@ -1,7 +1,10 @@
 <?php
 
 namespace app\modules\v1\models;
-
+use yii\behaviors\TimestampBehavior;
+use yii\behaviors\BlameableBehavior;
+use yii\behaviors\AttributesBehavior;
+use yii\db\ActiveRecord;
 use Yii;
 
 /**
@@ -16,7 +19,7 @@ use Yii;
  * @property int $idCuenta El identificador de la cuenta asociada a este movimiento
  * @property int $idUsuario
  */
-class Movimiento extends \yii\db\ActiveRecord
+class Movimiento extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -25,14 +28,44 @@ class Movimiento extends \yii\db\ActiveRecord
     {
         return 'movimiento';
     }
-
+    public function behaviors()
+    {
+        return [
+                TimestampBehavior::className(),
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'idUsuario',
+                'updatedByAttribute' => false,
+            ],
+            [
+                'class' => AttributesBehavior::className(),
+                'attributes' => [
+                    'created_at' => [
+                        ActiveRecord::EVENT_BEFORE_INSERT => \Yii::$app->formatter->asDatetime('2017-07-13'),
+                        ActiveRecord::EVENT_BEFORE_UPDATE => \Yii::$app->formatter->asDatetime('2017-07-13'),
+                    ],
+                    'amount' =>[
+                        ActiveRecord::EVENT_AFTER_INSERT => [$this, 'setAmount'],
+                    ],
+                   
+                ],
+            ],
+        ];
+    }
+    public function setAmount(){
+        $cuenta = Cuenta::findOne($this->idCuenta);
+        $cuenta->amount = $cuenta->amount+$this->amount;
+        $cuenta->save();
+        //return $this->amount; 
+        return $cuenta->amount;
+    }
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['description', 'name', 'amount', 'created_at', 'updated_at', 'idCuenta', 'idUsuario'], 'required'],
+            [['description', 'name', 'amount', 'idCuenta'], 'required'],
             [['amount', 'created_at', 'updated_at', 'idCuenta', 'idUsuario'], 'integer'],
             [['description'], 'string', 'max' => 100],
             [['name'], 'string', 'max' => 40],
@@ -55,7 +88,25 @@ class Movimiento extends \yii\db\ActiveRecord
             'idUsuario' => 'Id Usuario',
         ];
     }
-
+    /**
+     * Funcion que determina que campos se van a devolver
+     * Comentar aquellos campos que no se quieran mostrar
+     * @return [type] [description]
+     */
+    public function fields()
+    {
+        //Poner en el array los campos que se quieran mostrar
+        return [
+            'id',
+            'name',
+            'description',
+            'amount',
+            'idCuenta',
+            'idUsuario',
+            'created_at',
+            'updated_at',
+        ];
+    }
     /**
      * {@inheritdoc}
      * @return MovimientoQuery the active query used by this AR class.
