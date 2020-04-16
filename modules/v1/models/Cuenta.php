@@ -7,6 +7,8 @@ use yii\behaviors\TimestampBehavior;
 use yii\behaviors\BlameableBehavior;
 use yii\db\Expression;
 use app\models\User;
+use yii\behaviors\AttributesBehavior;
+use \yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "cuenta".
@@ -33,7 +35,29 @@ class Cuenta extends \yii\db\ActiveRecord
     {
         return [
             TimestampBehavior::className(),
-        ];
+        [
+            'class' => AttributesBehavior::className(),
+            'attributes' => [
+                'amount' =>[
+                    //Una vez se haya creado el nuevo movimiento, actualizamos el valor de la cuenta
+                    ActiveRecord::EVENT_AFTER_INSERT => [$this, 'setCreador'],
+                ],
+               
+            ],
+        ],
+    ];
+}
+    /**
+     * Funcion que permite actualizar el valor 'amount' (la cantidad total de la cuenta) de la cuenta 
+     * especificada con el 'amount' del movimimiento
+     */
+    public function setCreador(){
+        $usuarioCuenta = new UsuarioCuenta();
+        $usuarioCuenta->idUsuario = \Yii::$app->user->id;
+        $usuarioCuenta->idCuenta = $this->id;
+        $usuarioCuenta->distribution = $this->distribution;
+        $usuarioCuenta->save();
+        //return $cuenta->amount;
     }
     /**
      * {@inheritdoc}
@@ -41,7 +65,7 @@ class Cuenta extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'distribution', 'amount', 'color', 'icon'], 'required'],
+            [['name', 'distribution', 'color', 'icon'], 'required'],
             [['distribution', 'amount', 'color', 'icon', 'created_at', 'updated_at'], 'integer'],
             [['name'], 'string', 'max' => 40],
         ];
@@ -57,7 +81,7 @@ class Cuenta extends \yii\db\ActiveRecord
         return [
             'id',
             'name',
-            'distribution',
+            //'distribution',
             'amount',
             'color',
             'icon',
@@ -76,7 +100,7 @@ class Cuenta extends \yii\db\ActiveRecord
         return [
             'id' => 'El identificador de la cuenta',
             'name' => 'El nombre que el usuario pone a la cuenta',
-            'distribution' => 'Cantidad entre 0 y 100 que se refiere al porcentaje que el usuario asigna a esta cuenta',
+            //'distribution' => 'Cantidad entre 0 y 100 que se refiere al porcentaje que el usuario asigna a esta cuenta',
             'amount' => 'La cantidad total disponible en esa cuenta',
             'color' => 'Color',
             'icon' => 'Icon',

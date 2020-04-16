@@ -45,6 +45,7 @@ class Movimiento extends ActiveRecord
                         ActiveRecord::EVENT_BEFORE_UPDATE => \Yii::$app->formatter->asDatetime('2017-07-13'),
                     ],
                     'amount' =>[
+                        //Una vez se haya creado el nuevo movimiento, actualizamos el valor de la cuenta
                         ActiveRecord::EVENT_AFTER_INSERT => [$this, 'setAmount'],
                     ],
                    
@@ -52,6 +53,10 @@ class Movimiento extends ActiveRecord
             ],
         ];
     }
+    /**
+     * Funcion que permite actualizar el valor 'amount' (la cantidad total de la cuenta) de la cuenta 
+     * especificada con el 'amount' del movimimiento
+     */
     public function setAmount(){
         $cuenta = Cuenta::findOne($this->idCuenta);
         $cuenta->amount = $cuenta->amount+$this->amount;
