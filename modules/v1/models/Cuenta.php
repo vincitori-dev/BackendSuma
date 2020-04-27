@@ -39,7 +39,7 @@ class Cuenta extends \yii\db\ActiveRecord
             'class' => AttributesBehavior::className(),
             'attributes' => [
                 'amount' =>[
-                    //Una vez se haya creado el nuevo movimiento, actualizamos el valor de la cuenta
+                    //Una vez se haya creado la nueva cuenta actualizamos el valor de la distribucion
                     ActiveRecord::EVENT_AFTER_INSERT => [$this, 'setCreador'],
                 ],
                
@@ -48,8 +48,8 @@ class Cuenta extends \yii\db\ActiveRecord
     ];
 }
     /**
-     * Funcion que permite actualizar el valor 'amount' (la cantidad total de la cuenta) de la cuenta 
-     * especificada con el 'amount' del movimimiento
+     * Funcion que permite actualizar el valor 'distribution' que permite al usuario repartir sus
+     * ingresos entre diferentes cuentas
      */
     public function setCreador(){
         $usuarioCuenta = new UsuarioCuenta();
@@ -57,6 +57,10 @@ class Cuenta extends \yii\db\ActiveRecord
         $usuarioCuenta->idCuenta = $this->id;
         $usuarioCuenta->distribution = $this->distribution;
         $usuarioCuenta->save();
+        //Actilizamos la cifra global de 'distribution' del usuario
+        $usuario = User::findOne(\Yii::$app->user->id);
+        $usuario->distribution = $usuario->distribution - $this->distribution;
+        $usuario->save();
         //return $cuenta->amount;
     }
     /**
@@ -65,9 +69,10 @@ class Cuenta extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'distribution', 'color', 'icon'], 'required'],
-            [['distribution', 'amount', 'color', 'icon', 'created_at', 'updated_at'], 'integer'],
-            [['name'], 'string', 'max' => 40],
+            [['name', 'distribution', 'color'], 'required'],
+            [['distribution', 'color', 'icon', 'created_at', 'updated_at'], 'integer'],
+            [['amount'],'number'],
+            [['name','description'], 'string', 'max' => 40],
         ];
     }
     /**
@@ -81,6 +86,7 @@ class Cuenta extends \yii\db\ActiveRecord
         return [
             'id',
             'name',
+            'description',
             //'distribution',
             'amount',
             'color',
@@ -90,6 +96,7 @@ class Cuenta extends \yii\db\ActiveRecord
             //'propietarios',
             //'distribution_N',
             'XXXXX',
+            'movimientos',
         ];
     }
     /**
@@ -100,12 +107,14 @@ class Cuenta extends \yii\db\ActiveRecord
         return [
             'id' => 'El identificador de la cuenta',
             'name' => 'El nombre que el usuario pone a la cuenta',
+            'description' => 'La descripción de la cuenta',
             //'distribution' => 'Cantidad entre 0 y 100 que se refiere al porcentaje que el usuario asigna a esta cuenta',
             'amount' => 'La cantidad total disponible en esa cuenta',
             'color' => 'Color',
             'icon' => 'Icon',
             'created_at' => 'Fecha de creación de la cuenta',
             'updated_at' => 'Fecha de modificación de la cuenta',
+
         ];
     }
 
@@ -137,7 +146,10 @@ class Cuenta extends \yii\db\ActiveRecord
         return $this->hasMany(User::className(), ['id' => 'idUsuario'])
                     ->via('usuarioCuenta');
     }
-    
+    public function getMovimientos()
+    {
+        return $this->hasMany(Movimiento::className(),['idCuenta'=>'id']);
+    }
     /**
      * @return mixed
      */
@@ -161,4 +173,5 @@ class Cuenta extends \yii\db\ActiveRecord
         }
         return $resultado;
     }
+
 }

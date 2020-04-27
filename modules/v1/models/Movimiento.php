@@ -40,10 +40,6 @@ class Movimiento extends ActiveRecord
             [
                 'class' => AttributesBehavior::className(),
                 'attributes' => [
-                    'created_at' => [
-                        ActiveRecord::EVENT_BEFORE_INSERT => \Yii::$app->formatter->asDatetime('2017-07-13'),
-                        ActiveRecord::EVENT_BEFORE_UPDATE => \Yii::$app->formatter->asDatetime('2017-07-13'),
-                    ],
                     'amount' =>[
                         //Una vez se haya creado el nuevo movimiento, actualizamos el valor de la cuenta
                         ActiveRecord::EVENT_AFTER_INSERT => [$this, 'setAmount'],
@@ -71,7 +67,8 @@ class Movimiento extends ActiveRecord
     {
         return [
             [['description', 'name', 'amount', 'idCuenta'], 'required'],
-            [['amount', 'created_at', 'updated_at', 'idCuenta', 'idUsuario'], 'integer'],
+            [['created_at', 'updated_at', 'idCuenta', 'idUsuario'], 'integer'],
+            [['amount'],'number'],
             [['description'], 'string', 'max' => 100],
             [['name'], 'string', 'max' => 40],
         ];
