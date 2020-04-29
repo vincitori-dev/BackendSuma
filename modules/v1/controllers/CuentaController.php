@@ -8,9 +8,7 @@ use yii\filters\auth\CompositeAuth;
 
 class CuentaController extends ActiveController
 {
-    /**
-     * @var mixed
-     */
+    
     public $modelClass = CuentaResource::class;
 
     /**
@@ -32,7 +30,6 @@ class CuentaController extends ActiveController
         ];
         return $behaviors;
     }
-
     public function actions()
     {
         $actions = parent::actions();
@@ -46,4 +43,13 @@ class CuentaController extends ActiveController
         };
         return $actions;
     }
+    //acciones vacias para la documentacion
+    /**
+     * Rest Description: Crear una nueva cuenta.
+     * Rest Fields: ['name','description','amount','color','icon','created_at','updated_at','XXXXX','movimientos',].
+     * Rest Filters: [].
+     * Rest Expand: [].
+     */
+    public function actionCreate(){}
+    
 }

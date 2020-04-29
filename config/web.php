@@ -6,7 +6,11 @@ $db = require __DIR__ . '/db.php';
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => [
+        'log',
+        'documentation'
+
+    ],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
@@ -66,6 +70,7 @@ $config = [
         'v1' => [
             'class' => 'app\modules\v1\Module',
         ],
+        'documentation' => 'nostop8\yii2\rest_api_doc\Module',
     ],
     'params' => $params,
 ];
