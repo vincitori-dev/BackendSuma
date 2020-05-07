@@ -51,5 +51,32 @@ class CuentaController extends ActiveController
      * Rest Expand: [].
      */
     public function actionCreate(){}
-    
+    /**
+     * Rest Description: Obtener cuentas del usuario autentificado.
+     * Rest Fields: ['name','description','amount','color','icon','created_at','updated_at','XXXXX','movimientos',].
+     * Rest Filters: [].
+     * Rest Expand: [].
+     */
+    public function actionIndex(){}
+    /**
+     * Rest Description: Eliminar cuenta seleccionada.
+     * Rest Fields: [].
+     * Rest Filters: [].
+     * Rest Expand: [].
+     */
+    public function actionDelete(){}
+    /**
+     * Rest Description: Ver datos de la cuenta seleccionada.
+     * Rest Fields: [].
+     * Rest Filters: [].
+     * Rest Expand: [].
+     */
+    public function actionView(){}
+    /**
+     * Rest Description: Actualizar los datos de una cuenta.
+     * Rest Fields: [].
+     * Rest Filters: [].
+     * Rest Expand: [].
+     */
+    public function actionUpdate(){}
 }

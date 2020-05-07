@@ -5,7 +5,9 @@ use app\modules\v1\resources\MovimientoResource;
 use yii\rest\ActiveController;
 use yii\filters\auth\HttpBearerAuth;
 use yii\filters\auth\CompositeAuth;
-
+/**
+ * Controlador de Movimientos
+ */
 class MovimientoController extends ActiveController
 {
     /**
@@ -19,14 +21,13 @@ class MovimientoController extends ActiveController
     public function behaviors()
     {
         $behaviors                  = parent::behaviors();
+        //Autenticamos a los usuarios con token de acceso
         $behaviors['authenticator'] =
             [
             'class'       => CompositeAuth::className(),
             'authMethods' =>
             [
-                //HttpBasicAuth::className(),  //id y password
                 HttpBearerAuth::className(), //access_token
-                //QueryParamAuth::className(), //access_token
             ],
 
         ];
@@ -35,7 +36,6 @@ class MovimientoController extends ActiveController
     public function actions()
     {
         $actions = parent::actions();
-        //unset($actions['index']);
         //Hacemos que solo devuelva los datos del usuario
         $actions['index']['prepareDataProvider'] = function($action) 
         {
@@ -45,5 +45,40 @@ class MovimientoController extends ActiveController
         };
         return $actions;
     }
-
+    //ACCIONES VACIAS PARA DOCUMENTACIÓN
+    /**
+     * Rest Description: Crear un nuevo movimiento.
+     * Rest Fields: ['id','name','description','amount','idCuenta'].
+     * Rest Filters: [].
+     * Rest Expand: [].
+     */
+    public function actionCreate(){}
+    /**
+     * Rest Description: Obtener movimientos del usuario autentificado.
+     * Rest Fields: [].
+     * Rest Filters: [].
+     * Rest Expand: [].
+     */
+    public function actionIndex(){}
+    /**
+     * Rest Description: Eliminar movimiento seleccionada.
+     * Rest Fields: [].
+     * Rest Filters: [].
+     * Rest Expand: [].
+     */
+    public function actionDelete(){}
+    /**
+     * Rest Description: Ver datos del movimiento seleccionada.
+     * Rest Fields: [].
+     * Rest Filters: [].
+     * Rest Expand: [].
+     */
+    public function actionView(){}
+    /**
+     * Rest Description: Actualizar los datos de un movimiento especifico.
+     * Rest Fields: ['id','name','description','amount','idCuenta'].
+     * Rest Filters: [].
+     * Rest Expand: [].
+     */
+    public function actionUpdate(){}
 }
