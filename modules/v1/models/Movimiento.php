@@ -28,6 +28,9 @@ class Movimiento extends ActiveRecord
     {
         return 'movimiento';
     }
+    public function init(){
+        $this->on(ActiveRecord::EVENT_BEFORE_DELETE, [$this, 'actualizarAmountCuenta']);
+    }
     public function behaviors()
     {
         return [
@@ -44,10 +47,15 @@ class Movimiento extends ActiveRecord
                         //Una vez se haya creado el nuevo movimiento, actualizamos el valor de la cuenta
                         ActiveRecord::EVENT_AFTER_INSERT => [$this, 'setAmount'],
                     ],
-                   
+                    
                 ],
             ],
         ];
+    }
+    public function actualizarAmountCuenta(){
+        $cuenta = Cuenta::findOne($this->idCuenta);
+        $cuenta->amount = $cuenta->amount-$this->amount;
+        $cuenta->save();
     }
     /**
      * Funcion que permite actualizar el valor 'amount' (la cantidad total de la cuenta) de la cuenta 
@@ -66,7 +74,7 @@ class Movimiento extends ActiveRecord
     public function rules()
     {
         return [
-            [['description', 'name', 'amount', 'idCuenta'], 'required'],
+            [['name', 'amount', 'idCuenta'], 'required'],
             [['created_at', 'updated_at', 'idCuenta', 'idUsuario'], 'integer'],
             [['amount'],'number'],
             [['description'], 'string', 'max' => 100],

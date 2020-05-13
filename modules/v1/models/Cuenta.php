@@ -41,8 +41,11 @@ class Cuenta extends \yii\db\ActiveRecord
                 'amount' =>[
                     //Una vez se haya creado la nueva cuenta actualizamos el valor de la distribucion
                     ActiveRecord::EVENT_AFTER_INSERT => [$this, 'setCreador'],
+                    
                 ],
-               
+                'distribution' => [
+                    ActiveRecord::EVENT_AFTER_UPDATE => [$this,'setActualizador'],
+                ]               
             ],
         ],
     ];
@@ -60,6 +63,23 @@ class Cuenta extends \yii\db\ActiveRecord
         //Actilizamos la cifra global de 'distribution' del usuario
         $usuario = User::findOne(\Yii::$app->user->id);
         $usuario->distribution = $usuario->distribution - $this->distribution;
+        $usuario->save();
+        //return $cuenta->amount;
+    }
+    /**
+     * Funcion que permite actualizar el valor 'distribution' asociado a una
+     * cuenta ya creada
+     */
+    public function setActualizador(){
+        $usuarioCuenta = UsuarioCuenta::find()->where(['idCuenta'=>$this->id])->one();
+        $usuarioCuenta->idUsuario = \Yii::$app->user->id;
+        $usuarioCuenta->idCuenta = $this->id;
+        $distribucionAntigua = $usuarioCuenta->distribution;
+        $usuarioCuenta->distribution = $this->distribution;
+        $usuarioCuenta->save();
+        //Actilizamos la cifra global de 'distribution' del usuario
+        $usuario = User::findOne(\Yii::$app->user->id);
+        $usuario->distribution = $usuario->distribution+$distribucionAntigua - $this->distribution;
         $usuario->save();
         //return $cuenta->amount;
     }
