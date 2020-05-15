@@ -41,6 +41,10 @@ class MovimientoController extends ActiveController
         {
             return new \yii\data\ActiveDataProvider([
                'query' => MovimientoResource::find()->where(['idUsuario' => \Yii::$app->user->id]),
+               'pagination' => [
+                'pageSizeLimit' => [0, 50],
+                'PageSize' => 0,
+            ],
             ]);
         };
         return $actions;
