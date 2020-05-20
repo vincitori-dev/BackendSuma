@@ -85,4 +85,14 @@ class MovimientoController extends ActiveController
      * Rest Expand: [].
      */
     public function actionUpdate(){}
+    /**
+     * Rest Description: Accion que devuelve el total de cuentas del usuario.
+     * Rest Fields: [].
+     * Rest Filters: [].
+     * Rest Expand: [].
+     */
+    public function actionTotal(){
+        $nmovimientos = MovimientoResource::find()->where(['idUsuario' => \Yii::$app->user->id])->count();
+        return $nmovimientos;
+    }
 }

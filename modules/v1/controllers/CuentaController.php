@@ -79,4 +79,14 @@ class CuentaController extends ActiveController
      * Rest Expand: [].
      */
     public function actionUpdate(){}
+    /**
+     * Rest Description: Accion que devuelve el total de cuentas del usuario.
+     * Rest Fields: [].
+     * Rest Filters: [].
+     * Rest Expand: [].
+     */
+    public function actionTotal(){
+        $cuentas = CuentaResource::find()->joinWith('propietarios')->where(['idUsuario'=>\Yii::$app->user->id])->count();
+        return $cuentas;
+    }
 }
