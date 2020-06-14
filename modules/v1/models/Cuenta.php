@@ -25,7 +25,8 @@ use \yii\db\ActiveRecord;
 class Cuenta extends \yii\db\ActiveRecord
 {
     /**
-     * {@inheritdoc}
+     * El nombre de la tabla de la base de datos asociada
+     * @return string
      */
     public static function tableName()
     {
@@ -120,7 +121,7 @@ class Cuenta extends \yii\db\ActiveRecord
         ];
     }
     /**
-     * {@inheritdoc}
+     * Atributos que son devueltos
      */
     public function attributeLabels()
     {
@@ -166,11 +167,15 @@ class Cuenta extends \yii\db\ActiveRecord
         return $this->hasMany(User::className(), ['id' => 'idUsuario'])
                     ->via('usuarioCuenta');
     }
+    /**
+     * Funcion que devuelve los movimientos de la cuenta
+     */
     public function getMovimientos()
     {
         return $this->hasMany(Movimiento::className(),['idCuenta'=>'id']);
     }
     /**
+     * Funcion auxiliar para la obtencion de los usuarios propietarios de las cuentas
      * @return mixed
      */
     public function getPropietariosDistribution()
@@ -178,7 +183,8 @@ class Cuenta extends \yii\db\ActiveRecord
         return $this->hasMany(UsuarioCuenta::className(), ['idCuenta' => 'id'])->with('propietario');
     }
     /**
-     * @return mixed
+     * Función que devuelve los usuarios propietarios de la cuenta
+     * @return Array 
      */
     public function getXXXXX()
     {

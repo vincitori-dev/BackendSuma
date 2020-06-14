@@ -52,6 +52,10 @@ class Movimiento extends ActiveRecord
             ],
         ];
     }
+    /**
+     * Funcion que permite actualizar el amount de la cuenta cuando se elimina
+     * alguna cuenta
+     */
     public function actualizarAmountCuenta(){
         $cuenta = Cuenta::findOne($this->idCuenta);
         $cuenta->amount = $cuenta->amount-$this->amount;
